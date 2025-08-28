@@ -46,4 +46,54 @@ public class UserDaoImplement implements UserDao {
         }
         return null;
     }
+    @Override
+    public void insert(User u) {
+        String sql = "INSERT INTO Users(email,username,fullname,password,avatar,roleid,phone,createdDate) "
+                + "VALUES(?,?,?,?,?,?,?,?)";
+        try (Connection con = new DBConnection().connection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, u.getEmail());
+            ps.setString(2, u.getUserName());
+            ps.setString(3, u.getFullName());
+            ps.setString(4, u.getPassWord()); // thực tế nên mã hoá
+            ps.setString(5, u.getAvatar());
+            ps.setInt(6, u.getRoleid());
+            ps.setString(7, u.getPhone());
+            ps.setTimestamp(8, new java.sql.Timestamp(u.getCreatedDate().getTime()));
+            ps.executeUpdate();
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @Override
+    public boolean checkExistEmail(String email) {
+        String sql = "SELECT 1 FROM Users WHERE email = ?";
+        try (Connection con = new DBConnection().connection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) { return rs.next(); }
+        } catch (Exception e) { e.printStackTrace(); }
+        return false;
+    }
+
+    @Override
+    public boolean checkExistUsername(String username) {
+        String sql = "SELECT 1 FROM Users WHERE username = ?";
+        try (Connection con = new DBConnection().connection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) { return rs.next(); }
+        } catch (Exception e) { e.printStackTrace(); }
+        return false;
+    }
+
+    @Override
+    public boolean checkExistPhone(String phone) {
+        String sql = "SELECT 1 FROM Users WHERE phone = ?";
+        try (Connection con = new DBConnection().connection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            try (ResultSet rs = ps.executeQuery()) { return rs.next(); }
+        } catch (Exception e) { e.printStackTrace(); }
+        return false;
+    }
 }

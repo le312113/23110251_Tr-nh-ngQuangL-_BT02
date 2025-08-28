@@ -22,4 +22,16 @@ public class User implements Serializable {
     private Date createdDate;
     public User(){
     }
+    public User(String email, String userName, String fullName,
+                String passWord, String avatar, int roleid,
+                String phone, java.util.Date createdDate) {
+        this.email = email;
+        this.userName = userName;
+        this.fullName = fullName;
+        this.passWord = passWord;
+        this.avatar = avatar;
+        this.roleid = roleid;
+        this.phone = phone;
+        this.createdDate = createdDate;
+    }
 }
