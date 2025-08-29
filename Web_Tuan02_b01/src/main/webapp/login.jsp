@@ -35,5 +35,12 @@
 
     <button type="submit">Đăng nhập</button>
     </form>
+    <form action="<c:url value='/register'/>" method="get">
+        <button type="submit">Đăng ký</button>
+    </form>
+    <form action="<c:url value='/forgetpassword'/>" method="get">
+        <button type="submit">Quên mật khẩu</button>
+    </form>
     </body>
     </html>
+

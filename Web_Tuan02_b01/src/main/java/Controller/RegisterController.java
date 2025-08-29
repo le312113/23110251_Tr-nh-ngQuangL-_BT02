@@ -16,7 +16,7 @@ public class RegisterController extends HttpServlet {
 
     @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
+        req.getRequestDispatcher("/register.jsp").forward(req, resp);
     }
 
     @Override protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -33,12 +33,12 @@ public class RegisterController extends HttpServlet {
         if (email==null||username==null||password==null||repass==null
                 || email.isEmpty()||username.isEmpty()||password.isEmpty()||repass.isEmpty()) {
             req.setAttribute("alert","Vui lòng nhập đủ thông tin bắt buộc");
-            req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
+            req.getRequestDispatcher("/register.jsp").forward(req, resp);
             return;
         }
         if (!password.equals(repass)) {
             req.setAttribute("alert","Mật khẩu nhập lại không khớp");
-            req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
+            req.getRequestDispatcher("/register.jsp").forward(req, resp);
             return;
         }
 
@@ -48,7 +48,7 @@ public class RegisterController extends HttpServlet {
             resp.sendRedirect(req.getContextPath()+"/login");
         } else {
             req.setAttribute("alert","Email/Username/SĐT đã tồn tại");
-            req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
+            req.getRequestDispatcher("/register.jsp").forward(req, resp);
         }
     }
 }
