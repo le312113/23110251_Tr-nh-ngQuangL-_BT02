@@ -36,48 +36,33 @@ public class CategoryEditController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
-
-        // 1) Lấy dữ liệu text
         String idStr   = req.getParameter("id");
         String name    = req.getParameter("name");
-        String oldIcon = req.getParameter("oldIcon"); // hidden trong form
-
+        String oldIcon = req.getParameter("oldIcon");
         Category category = new Category();
         if (idStr != null && !idStr.trim().isEmpty()) {
             category.setCateid(Integer.parseInt(idStr));
         }
         category.setCatename(name);
-
-        // 2) Xử lý file (nếu người dùng chọn ảnh mới)
-        Part filePart = req.getPart("icon"); // name="icon" trong form
+        Part filePart = req.getPart("icon");
         if (filePart != null && filePart.getSize() > 0) {
-            // Thư mục lưu: Constant.DIR là thư mục gốc, ví dụ "C:/upload"
             File folder = new File(Constant.DIR, "category");
             if (!folder.exists()) folder.mkdirs();
 
             String original = Paths.get(filePart.getSubmittedFileName())
-                    .getFileName().toString(); // tránh path traversal
+                    .getFileName().toString();
             String ext = "dat";
             int dot = original.lastIndexOf('.');
             if (dot >= 0 && dot < original.length() - 1) {
                 ext = original.substring(dot + 1);
             }
             String fileName = System.currentTimeMillis() + "." + ext;
-
-            // Ghi file
             filePart.write(new File(folder, fileName).getAbsolutePath());
-
-            // Lưu đường dẫn tương đối vào DB
             category.setIcon("category/" + fileName);
         } else {
-            // Không upload mới → dùng lại icon cũ
             category.setIcon(oldIcon);
         }
-
-        // 3) Cập nhật DB
         cateService.edit(category);
-
-        // 4) Điều hướng
         resp.sendRedirect(req.getContextPath() + "/admin/category/list");
     }
 }

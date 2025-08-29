@@ -30,41 +30,29 @@ public class CategoryAddController  extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
-
-        // 1) Lấy dữ liệu text
         String name = req.getParameter("name");
 
         Category category = new Category();
-        category.setCatename(name);   // nếu field là setName thì đổi lại
-
-        // 2) Xử lý file (nếu có chọn)
-        Part filePart = req.getPart("icon"); // name="icon" trong form
+        category.setCatename(name);
+        Part filePart = req.getPart("icon");
         if (filePart != null && filePart.getSize() > 0) {
-            File folder = new File(Constant.DIR, "category"); // Constant.DIR là thư mục gốc (vd C:/upload)
+            File folder = new File(Constant.DIR, "category");
             if (!folder.exists()) folder.mkdirs();
 
             String original = Paths.get(filePart.getSubmittedFileName())
-                    .getFileName().toString(); // tránh path traversal
+                    .getFileName().toString();
             String ext = "dat";
             int dot = original.lastIndexOf('.');
             if (dot >= 0 && dot < original.length() - 1) {
                 ext = original.substring(dot + 1);
             }
             String fileName = System.currentTimeMillis() + "." + ext;
-
-            // Ghi file
             filePart.write(new File(folder, fileName).getAbsolutePath());
-
-            // Lưu đường dẫn tương đối vào DB
             category.setIcon("category/" + fileName);
         } else {
-            category.setIcon(null); // hoặc "" nếu DB cho phép rỗng
+            category.setIcon(null);
         }
-
-        // 3) Lưu DB
         cateService.insert(category);
-
-        // 4) Điều hướng về danh sách
         resp.sendRedirect(req.getContextPath() + "/admin/category/list");
     }
 }
