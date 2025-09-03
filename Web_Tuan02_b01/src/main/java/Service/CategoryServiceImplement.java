@@ -38,4 +38,8 @@ public class CategoryServiceImplement implements CategoryService  {
     public List<Category> search(String catename) {
         return categoryDao.search(catename);
     }
+    @Override
+    public List<Category> getAllByUser(int userId) {
+        return categoryDao.getAllByUser(userId);
+    }
 }

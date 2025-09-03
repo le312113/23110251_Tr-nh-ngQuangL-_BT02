@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import model.Category;
+import model.User;
 import org.apache.commons.fileupload2.core.DiskFileItemFactory;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletFileUpload;
@@ -36,14 +37,37 @@ public class CategoryEditController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
+
+        // Lấy user hiện tại từ session
+        User auth = (User) req.getSession().getAttribute("auth");
+        if (auth == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+        int userId = auth.getId();
+
         String idStr   = req.getParameter("id");
         String name    = req.getParameter("name");
         String oldIcon = req.getParameter("oldIcon");
-        Category category = new Category();
-        if (idStr != null && !idStr.trim().isEmpty()) {
-            category.setCateid(Integer.parseInt(idStr));
+
+        if (idStr == null || idStr.isEmpty()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu id");
+            return;
         }
-        category.setCatename(name);
+        int id = Integer.parseInt(idStr);
+
+        // Lấy category cũ từ DB để check quyền sở hữu
+        Category oldCate = cateService.get(id);
+        if (oldCate == null || oldCate.getUserId() != userId) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Không có quyền sửa category này");
+            return;
+        }
+
+        // Update dữ liệu
+        if (name != null && !name.isEmpty()) {
+            oldCate.setCatename(name);
+        }
+
         Part filePart = req.getPart("icon");
         if (filePart != null && filePart.getSize() > 0) {
             File folder = new File(Constant.DIR, "category");
@@ -58,11 +82,17 @@ public class CategoryEditController extends HttpServlet {
             }
             String fileName = System.currentTimeMillis() + "." + ext;
             filePart.write(new File(folder, fileName).getAbsolutePath());
-            category.setIcon("category/" + fileName);
+            oldCate.setIcon("category/" + fileName);
         } else {
-            category.setIcon(oldIcon);
+            oldCate.setIcon(oldIcon);
         }
-        cateService.edit(category);
+
+        // userId giữ nguyên
+        oldCate.setUserId(userId);
+
+        // Gọi service update
+        cateService.edit(oldCate);
+
         resp.sendRedirect(req.getContextPath() + "/admin/category/list");
     }
 }

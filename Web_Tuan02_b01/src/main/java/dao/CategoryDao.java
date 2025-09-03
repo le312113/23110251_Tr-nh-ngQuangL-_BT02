@@ -12,5 +12,5 @@ public interface CategoryDao {
     Category get(String name);
     List<Category> getAll();
     List<Category> search(String keyword);
-
+    List<Category> getAllByUser(int userId);
 }

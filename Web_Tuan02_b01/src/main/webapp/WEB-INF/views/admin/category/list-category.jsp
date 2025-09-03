@@ -1,5 +1,8 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
+
+<p>DEBUG JSP cateList size = ${fn:length(cateList)}</p>
 
 <table class="table">
     <thead>
@@ -14,29 +17,20 @@
     <c:forEach items="${cateList}" var="cate" varStatus="st">
         <tr class="odd gradeX">
             <td>${st.index + 1}</td>
-
-            <c:set var="fname" value="${empty cate.icon ? '' : cate.icon}" />
-            <c:url value="/image" var="imgUrl">
-                <c:param name="fname" value="${fname}" />
-            </c:url>
-
             <td>
                 <c:choose>
                     <c:when test="${not empty cate.icon}">
-                        <img src="${imgUrl}" width="200" height="150" alt="${cate.name}" />
+                        <img src="${cate.icon}" width="200" height="150" alt="${cate.catename}" />
                     </c:when>
                     <c:otherwise>
                         <span>Không có ảnh</span>
                     </c:otherwise>
                 </c:choose>
             </td>
-
-            <td>${cate.name}</td>
-
+            <td>${cate.catename}</td>
             <td class="center">
-                <a href="<c:url value='/admin/category/edit?id=${cate.id}'/>">Sửa</a>
-                |
-                <a href="<c:url value='/admin/category/delete?id=${cate.id}'/>"
+                <a href="<c:url value='/admin/category/edit?id=${cate.cateid}'/>">Sửa</a> |
+                <a href="<c:url value='/admin/category/delete?id=${cate.cateid}'/>"
                    onclick="return confirm('Xóa danh mục này?');">Xóa</a>
             </td>
         </tr>

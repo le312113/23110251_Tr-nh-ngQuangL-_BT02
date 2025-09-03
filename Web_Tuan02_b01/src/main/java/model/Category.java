@@ -12,6 +12,7 @@ public class Category  {
     private int cateid;
     private String catename;
     private String icon;
+    private int userId;
     public Category(){
     }
 }

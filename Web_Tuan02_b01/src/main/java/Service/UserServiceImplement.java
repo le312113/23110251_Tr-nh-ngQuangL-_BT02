@@ -15,7 +15,7 @@ public class UserServiceImplement implements UserService{
         if (user != null && password.equals(user.getPassWord())) {
             return user;
         }
-        return null;// thất bại
+        return null;
     }
 
     @Override
@@ -33,9 +33,7 @@ public class UserServiceImplement implements UserService{
         if (userDao.checkExistUsername(username) || userDao.checkExistEmail(email) || userDao.checkExistPhone(phone)) {
             return false;
         }
-        // tạo user & lưu
         java.sql.Timestamp now = new java.sql.Timestamp(System.currentTimeMillis());
-        // roleid = 5 theo slide (tuỳ bạn quy ước)
         User u = new User(email, username, fullname, password, null, 5, phone, now);
         userDao.insert(u);
         return true;
